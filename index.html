@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Tic-Tac-Toe</title>
+  <meta name="description" content="A sleek Tic-Tac-Toe game for iOS and Android with AI difficulty levels and 2-player pass-and-play." />
+
+  <!-- PWA & Theme -->
+  <link rel="manifest" href="./manifest.json" />
+  <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)" />
+
+  <!-- iOS Home Screen / Safari Web App -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Tic-Tac-Toe" />
+  <link rel="apple-touch-icon" href="./icons/icon-192.png" />
+  <link rel="icon" type="image/svg+xml" href="./icons/icon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
+
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark brand-x" aria-hidden="true">X</span>
+        <span class="brand-mark brand-o" aria-hidden="true">O</span>
+        <h1>Tic-Tac-Toe</h1>
+      </div>
+      <div class="topbar-actions">
+        <button id="soundToggle" class="icon-btn" type="button" aria-label="Toggle sound effects" title="Toggle sound">
+          <svg id="soundOnIcon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+          </svg>
+          <svg id="soundOffIcon" class="hidden" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <line x1="23" y1="9" x2="17" y2="15"></line>
+            <line x1="17" y1="9" x2="23" y2="15"></line>
+          </svg>
+        </button>
+        <button id="themeToggle" class="icon-btn" type="button" aria-label="Toggle color theme" title="Toggle theme">
+          <svg id="sunIcon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg id="moonIcon" class="hidden" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="main">
+      <!-- Mode Selector -->
+      <section class="controls" aria-label="Game settings">
+        <div class="segmented" role="tablist" aria-label="Game mode">
+          <button class="seg-btn active" data-mode="ai" role="tab" aria-selected="true" type="button">
+            1 Player (vs AI)
+          </button>
+          <button class="seg-btn" data-mode="pvp" role="tab" aria-selected="false" type="button">
+            2 Players
+          </button>
+        </div>
+
+        <!-- AI Settings (hidden in 2P mode) -->
+        <div id="aiOptions" class="ai-options">
+          <div class="option-group">
+            <span class="option-label">Difficulty</span>
+            <div class="pill-group" role="radiogroup" aria-label="AI difficulty">
+              <button class="pill-btn" data-difficulty="easy" role="radio" aria-checked="false" type="button">Easy</button>
+              <button class="pill-btn" data-difficulty="medium" role="radio" aria-checked="false" type="button">Medium</button>
+              <button class="pill-btn active" data-difficulty="hard" role="radio" aria-checked="true" type="button">Unbeatable</button>
+            </div>
+          </div>
+
+          <div class="option-group">
+            <span class="option-label">Play as</span>
+            <div class="pill-group" role="radiogroup" aria-label="Choose your symbol">
+              <button class="pill-btn active" data-symbol="X" role="radio" aria-checked="true" type="button">X</button>
+              <button class="pill-btn" data-symbol="O" role="radio" aria-checked="false" type="button">O</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Scoreboard -->
+      <section class="scoreboard" aria-label="Scoreboard">
+        <div id="scoreCardX" class="score-card score-x">
+          <span id="labelX" class="score-label">You (X)</span>
+          <span id="scoreX" class="score-value">0</span>
+        </div>
+        <div id="scoreCardDraw" class="score-card score-draw">
+          <span class="score-label">Draws</span>
+          <span id="scoreDraw" class="score-value">0</span>
+        </div>
+        <div id="scoreCardO" class="score-card score-o">
+          <span id="labelO" class="score-label">AI (O)</span>
+          <span id="scoreO" class="score-value">0</span>
+        </div>
+      </section>
+
+      <!-- Status Banner -->
+      <div id="statusBanner" class="status-banner" role="status" aria-live="polite">
+        <span id="statusDot" class="status-dot"></span>
+        <span id="statusText">Your turn (X)</span>
+      </div>
+
+      <!-- 3x3 Board -->
+      <section class="board-wrapper" aria-label="Tic-Tac-Toe board">
+        <div id="board" class="board" role="grid" aria-label="3 by 3 Tic-Tac-Toe grid">
+          <button class="cell" data-index="0" type="button" role="gridcell" aria-label="Row 1, Column 1, empty"></button>
+          <button class="cell" data-index="1" type="button" role="gridcell" aria-label="Row 1, Column 2, empty"></button>
+          <button class="cell" data-index="2" type="button" role="gridcell" aria-label="Row 1, Column 3, empty"></button>
+          <button class="cell" data-index="3" type="button" role="gridcell" aria-label="Row 2, Column 1, empty"></button>
+          <button class="cell" data-index="4" type="button" role="gridcell" aria-label="Row 2, Column 2, empty"></button>
+          <button class="cell" data-index="5" type="button" role="gridcell" aria-label="Row 2, Column 3, empty"></button>
+          <button class="cell" data-index="6" type="button" role="gridcell" aria-label="Row 3, Column 1, empty"></button>
+          <button class="cell" data-index="7" type="button" role="gridcell" aria-label="Row 3, Column 2, empty"></button>
+          <button class="cell" data-index="8" type="button" role="gridcell" aria-label="Row 3, Column 3, empty"></button>
+        </div>
+        <svg id="winLineSvg" class="win-line-svg" viewBox="0 0 300 300" aria-hidden="true">
+          <line id="winLine" x1="0" y1="0" x2="0" y2="0" />
+        </svg>
+      </section>
+
+      <!-- Action Buttons -->
+      <section class="actions">
+        <button id="newRoundBtn" class="btn btn-primary" type="button">New Round</button>
+        <button id="resetScoreBtn" class="btn btn-secondary" type="button">Reset Scores</button>
+      </section>
+
+      <!-- Optional PWA Install Button (Android / Desktop Chrome) -->
+      <button id="installBtn" class="btn btn-install hidden" type="button">
+        Install App to Home Screen
+      </button>
+    </main>
+  </div>
+
+  <script src="./game.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
